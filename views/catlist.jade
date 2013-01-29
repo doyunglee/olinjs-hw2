@@ -1,0 +1,20 @@
+extend layout
+
+block content
+   h1= 'Add-a-Cat'
+   p *===============================*
+   | <form method="post" enctype="multipart/form-data"> 
+   p 
+    label Cat's Name:
+    input(name='name')
+
+   p 
+    label Cat's Color:
+    input(name='colors')
+
+   p 
+    Your Cat's age will be assigned to it. You are powerless.
+
+   p
+    input(type="submit")
+   | </form>

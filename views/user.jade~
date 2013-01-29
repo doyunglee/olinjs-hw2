@@ -1,0 +1,11 @@
+extends layout
+
+block content
+  h1= title
+  p *===============================*
+
+  div
+    each user in users
+      div(value=user) 
+        p #{user.name}, #{user.color}, #{user.age}
+        p ------------------------------

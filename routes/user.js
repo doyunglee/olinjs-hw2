@@ -1,0 +1,67 @@
+
+/*
+ * GET users listing.
+ */
+
+Array.prototype.sortByProp = function(p){
+ return this.sort(function(a,b){
+  return (a[p] > b[p]) ? 1 : (a[p] < b[p]) ? -1 : 0;
+ });
+}
+
+var mongoose = require('mongoose');
+var schema = mongoose.Schema({ name: String, color: Array(), age: Number }); //make sure the name is a string
+var Cat = mongoose.model('Cat', schema);
+
+exports.list = function(req, res){
+  Cat.find({}, function(err, db_cats) {
+    if(err) {console.log("oh my, what a Cat-astrophe. Something is wrong.")}
+    db_cats.sortByProp('age');
+    res.render('user', {
+       users: db_cats,
+       title: 'Cat Directory'
+    });
+  });
+};
+
+exports.colorcat = function(req, res){
+  Cat.find({color:req.params.color}, function(err, db_cats) {
+    if(err) {console.log("oh my, what a Cat-astrophe. Something is wrong.")}
+    db_cats.sortByProp('age');
+    res.render('user', {
+       users: db_cats,
+       title: 'Cats by Color ' + req.params.color
+    });
+  });
+};
+
+exports.new = function(req, res){ //calls catlist jade file with title add-a-cat. Takes the info from the catlist.
+  res.render('catlist', {
+  title: 'Add-a-Cat'});
+};
+
+
+exports.old = function(req, res){ // Takes rid of last cat.
+  Cat.find({}, function(err, db_cats) {
+    db_cats.sortByProp('age');
+    oldcat = db_cats[db_cats.length-1];
+    Cat.remove({_id: oldcat._id}, function(err){
+      if(err) console.log("oh  my, what a Cat-astrophe. Something is wrong.");
+    res.send('You meownster, I hope you are happy the cat died');         
+    });
+  });
+};
+
+exports.addcat = function(req, res){ //from app.js to add a cat into the list
+  var age = Math.floor(Math.random()*10);
+  var colors = req.body.colors.replace(/ /g, '').toLowerCase().split(",");
+  var name = req.body.name;
+  var catness = new Cat({name: name, color: colors, age: age}); //new cat element
+  catness.save(function (err) {
+    if (err)
+      console.log("oh my, what a Cat-astrophe. Something is wrong.", err);
+    res.send('Cong-cats, you made a new feline!');
+  }); //sends the cat (catness) to the database.
+}
+
+
